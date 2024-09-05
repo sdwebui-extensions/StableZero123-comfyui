@@ -3,6 +3,8 @@ import requests
 from PIL import Image
 from diffusers import DiffusionPipeline, EulerAncestralDiscreteScheduler, ControlNetModel
 import numpy as np
+import folder_paths
+import os
 
 #tiles = [im[x:x+M,y:y+N] for x in range(0,im.shape[0],M) for y in range(0,im.shape[1],N)]
 class ImageSplit:
@@ -96,7 +98,12 @@ class Stablezero123:
     CATEGORY = "tests"
 
     def execute(self, images, ckpt_name, pipeline_name, inference_steps):
-        pipeline = DiffusionPipeline.from_pretrained(ckpt_name, custom_pipeline=pipeline_name, torch_dtype=torch.float16)
+        ckpt_path = os.path.join(folder_paths.models_dir, "zero123", os.path.basename(ckpt_name))
+        pipeline_path = os.path.join(folder_paths.models_dir, "zero123", os.path.basename(pipeline_name))
+        if not os.path.exists(ckpt_path) and os.path.exists(folder_paths.cache_dir):
+            ckpt_path = os.path.join(folder_paths.cache_dir, "zero123", os.path.basename(ckpt_name))
+            pipeline_path = os.path.join(folder_paths.cache_dir, "zero123", os.path.basename(pipeline_name))
+        pipeline = DiffusionPipeline.from_pretrained(ckpt_path, custom_pipeline=pipeline_path, torch_dtype=torch.float16)
         
         pipeline.scheduler = EulerAncestralDiscreteScheduler.from_config(
         pipeline.scheduler.config, timestep_spacing='trailing')
@@ -153,8 +160,15 @@ class Stablezero123WithDepth:
     CATEGORY = "tests"
 
     def execute(self, images, depth_images, ckpt_name, control_model_name, pipeline_name, inference_steps):
-        pipeline = DiffusionPipeline.from_pretrained(ckpt_name, custom_pipeline=pipeline_name, torch_dtype=torch.float16)
-        pipeline.add_controlnet(ControlNetModel.from_pretrained(control_model_name, torch_dtype=torch.float16), conditioning_scale=0.75)
+        ckpt_path = os.path.join(folder_paths.models_dir, "zero123", os.path.basename(ckpt_name))
+        pipeline_path = os.path.join(folder_paths.models_dir, "zero123", os.path.basename(pipeline_name))
+        cn_path = os.path.join(folder_paths.models_dir, "zero123", os.path.basename(control_model_name))
+        if not os.path.exists(ckpt_path) and os.path.exists(folder_paths.cache_dir):
+            ckpt_path = os.path.join(folder_paths.cache_dir, "zero123", os.path.basename(ckpt_name))
+            pipeline_path = os.path.join(folder_paths.cache_dir, "zero123", os.path.basename(pipeline_name))
+            cn_path = os.path.join(folder_paths.cache_dir, "zero123", os.path.basename(control_model_name))
+        pipeline = DiffusionPipeline.from_pretrained(ckpt_path, custom_pipeline=pipeline_path, torch_dtype=torch.float16)
+        pipeline.add_controlnet(ControlNetModel.from_pretrained(cn_path, torch_dtype=torch.float16), conditioning_scale=0.75)
         
         pipeline.scheduler = EulerAncestralDiscreteScheduler.from_config(
         pipeline.scheduler.config, timestep_spacing='trailing')
