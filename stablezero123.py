@@ -101,8 +101,8 @@ class Stablezero123:
         ckpt_path = os.path.join(folder_paths.models_dir, "zero123", os.path.basename(ckpt_name))
         pipeline_path = os.path.join(folder_paths.models_dir, "zero123", os.path.basename(pipeline_name))
         if not os.path.exists(ckpt_path) and os.path.exists(folder_paths.cache_dir):
-            ckpt_path = os.path.join(folder_paths.cache_dir, "zero123", os.path.basename(ckpt_name))
-            pipeline_path = os.path.join(folder_paths.cache_dir, "zero123", os.path.basename(pipeline_name))
+            ckpt_path = os.path.join(folder_paths.cache_dir, "models/zero123", os.path.basename(ckpt_name))
+            pipeline_path = os.path.join(folder_paths.cache_dir, "models/zero123", os.path.basename(pipeline_name))
         pipeline = DiffusionPipeline.from_pretrained(ckpt_path, custom_pipeline=pipeline_path, torch_dtype=torch.float16)
         
         pipeline.scheduler = EulerAncestralDiscreteScheduler.from_config(
@@ -164,9 +164,9 @@ class Stablezero123WithDepth:
         pipeline_path = os.path.join(folder_paths.models_dir, "zero123", os.path.basename(pipeline_name))
         cn_path = os.path.join(folder_paths.models_dir, "zero123", os.path.basename(control_model_name))
         if not os.path.exists(ckpt_path) and os.path.exists(folder_paths.cache_dir):
-            ckpt_path = os.path.join(folder_paths.cache_dir, "zero123", os.path.basename(ckpt_name))
-            pipeline_path = os.path.join(folder_paths.cache_dir, "zero123", os.path.basename(pipeline_name))
-            cn_path = os.path.join(folder_paths.cache_dir, "zero123", os.path.basename(control_model_name))
+            ckpt_path = os.path.join(folder_paths.cache_dir, "models/zero123", os.path.basename(ckpt_name))
+            pipeline_path = os.path.join(folder_paths.cache_dir, "models/zero123", os.path.basename(pipeline_name))
+            cn_path = os.path.join(folder_paths.cache_dir, "models/zero123", os.path.basename(control_model_name))
         pipeline = DiffusionPipeline.from_pretrained(ckpt_path, custom_pipeline=pipeline_path, torch_dtype=torch.float16)
         pipeline.add_controlnet(ControlNetModel.from_pretrained(cn_path, torch_dtype=torch.float16), conditioning_scale=0.75)
         
